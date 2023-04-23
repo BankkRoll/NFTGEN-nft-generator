@@ -6,10 +6,11 @@
 NFTGEN is an open-source tool for generating unique NFT images or GIFs, complete with metadata. You can easily customize and configure NFTGEN to suit your needs and generate your own NFTs in just a few simple steps.
 
 ## Installation
-1. Download [Node.js](https://nodejs.org)
-2. Clone the NFTGEN repository from GitHub: `git clone https://github.com/BankkRoll/NFTGEN-nft-gif-generator.git`
-3. Or download here -> https://github.com/BankkRoll/NFTGEN-nft-gif-generator/archive/refs/heads/main.zip
-4. Install the project dependencies: `npm install`
+1. Star the project so i know to keep making things others find useful.
+2. Download [Node.js](https://nodejs.org)
+3. Clone the NFTGEN repository from GitHub: `git clone https://github.com/BankkRoll/NFTGEN-nft-gif-generator.git`
+4. Or download here -> https://github.com/BankkRoll/NFTGEN-nft-gif-generator/archive/refs/heads/main.zip
+5. Install the project dependencies: `npm install`
 
 ## Configuration
 1. Update the configuration settings in the `config.js` file to customize the output of your NFTs.
