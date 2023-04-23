@@ -1,0 +1,20 @@
+{
+  "name": "Cool NFT #0",
+  "description": "I just generated my NFT GIFs using the NFTGEN by bankkroll found on github opensource!",
+  "image": "0.gif",
+  "external_url": "https://github.com/BankkRoll/NFTGEN-nft-gif-generator",
+  "attributes": [
+    {
+      "trait_type": "Head",
+      "value": "Circle"
+    },
+    {
+      "trait_type": "Eyes",
+      "value": "BTC Eyes"
+    },
+    {
+      "trait_type": "Mouth",
+      "value": "Charts"
+    }
+  ]
+}

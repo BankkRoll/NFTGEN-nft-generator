@@ -1,0 +1,16 @@
+{
+    "name": "NFTGEN",
+    "version": "4.2.0",
+    "description": "Generate gifs into nft gifs",
+    "main": "script.js",
+    "scripts": {
+        "start": "node generate.js"
+    },
+    "dependencies": {
+        "canvas": "^2.8.0",
+        "gifencoder": "^2.0.0",
+        "sharp": "^0.29.2"
+    },
+    "author": "Bankkroll.eth",
+    "license": "MIT"
+}
