@@ -2,11 +2,46 @@ const fs = require("fs");
 const path = require("path");
 const { loadImage, createCanvas } = require("canvas");
 const GIFEncoder = require("gifencoder");
-const sharp = require("sharp");
-const printHeader = require('./bankkroll');
 const inquirer = require('inquirer');
 const config = require("./config.js");
+const { ThirdwebStorage } = require("@thirdweb-dev/storage");
+const { execSync } = require('child_process');
 
+const printHeader = require('./workers/bankkroll');
+const printCollectionInfo = require("./workers/collectionInfoPrinter");
+const { logSuccess, logError } = require("./workers/consoleLogger");
+const { readDir } = require("./workers/utils");
+const animateConsoleLog = require('./workers/animateLogs');
+const extractFrames = require('./workers/extractFrames');
+
+
+
+// Create a delay
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// Returns a random trait from each fodler
+function randomChoice(array) {
+  return array[Math.floor(Math.random() * array.length)];
+}
+
+// Calculate the total combinations possible
+function calculateTotalCombinations(config) {
+  return config.traitFolders.reduce((acc, folder) => {
+    const traitPath = path.join(config.traitsFolder, folder);
+    const traitChoices = fs.readdirSync(traitPath);
+    return acc * traitChoices.length;
+  }, 1);
+}
+
+
+
+//#########################################//
+//#                                       #//
+//#           Main Function               #//
+//#                                       #//
+//#########################################//
 
 async function main() {
   try {
@@ -32,7 +67,7 @@ async function main() {
 
     // Check that the requested number of files does not exceed the total possible combinations
     if (config.numImages > totalCombinations) {
-      console.error(`\x1b[41m\x1b[1m\x1b[37m ERROR \x1b[0m\x1b[31m Requested number of files (${config.numImages}) exceeds the total possible combinations (${totalCombinations}). Please lower the number of files to generate. \x1b[0m`);
+      logError(`Requested number of files (${config.numImages}) exceeds the total possible combinations (${totalCombinations}). Please lower the number of files to generate.`);
       return;
     }
     printCollectionInfo(config);
@@ -45,7 +80,7 @@ async function main() {
       } else {
         await generateImage(i, config);
       }
-      console.log(`\x1b[42m\x1b[1m\x1b[30m SUCCESS \x1b[0m\x1b[32m Generated ${fileType} #${i + config.startAt} \x1b[0m`);
+      logSuccess(`Generated ${fileType} #${i + config.startAt}`);
     }
 
     animateConsoleLog(`\n\x1b[1m\x1b[32m All ${fileType} generated successfully! Details below.... \x1b[0m\n`, 40);
@@ -54,98 +89,44 @@ async function main() {
     printCollectionInfo(config);
     await delay(2000);
 
-    printHeader();
-    await delay(1000);
+    // Prompt the user to choose whether to upload to IPFS or not
+    const ipfsAnswer = await inquirer.prompt({
+      type: 'list',
+      name: 'choice',
+      message: 'Do you want to upload the generated files to IPFS?',
+      choices: ['Yes', 'No'],
+    });
 
-    animateConsoleLog(`\n\x1b[1m\x1b[33mLiked NFTGEN? Consider buying me a redbull! Thanks!\x1b[0m\n` +
-    `\x1b[1m\x1b[32m ETHEREUM Address: \x1b[0m\n` +
-    `\x1b[1m\x1b[36m 0x52b626802B3fc229badd50EA0d7e05278421C16f \x1b[0m\n`, 35);
-    } catch (err) {
-    console.error(`\x1b[41m\x1b[1m\x1b[37m ERROR \x1b[0m\x1b[31m Failed to generate files: ${err.message} \x1b[0m`);
-  }
-}
-
-
-// Create a delay
-function delay(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-
-// Animate console log
-function animateConsoleLog(text, delay) {
-  let i = 0;
-  const intervalId = setInterval(() => {
-    process.stdout.write(text[i++]);
-    if (i === text.length) {
-      clearInterval(intervalId);
-      console.log();
+    if (ipfsAnswer.choice === 'Yes') {
+      const folderPath = config.outputFolder;
+      const cmd = `npx thirdweb@latest upload ${folderPath}`;
+      execSync(cmd, { stdio: 'inherit' });
+    } else {
+      console.log('Skipping IPFS upload.');
     }
-  }, delay);
-}
 
 
-// Calculate the total combinations possible
-function calculateTotalCombinations(config) {
-  return config.traitFolders.reduce((acc, folder) => {
-    const traitPath = path.join(config.traitsFolder, folder);
-    const traitChoices = fs.readdirSync(traitPath);
-    return acc * traitChoices.length;
-  }, 1);
-}
+    await delay(2000);
+    printHeader();
 
-
-// Print the details of the collection
-function printCollectionInfo(config) {
-  const totalCombinations = calculateTotalCombinations(config);
-  const percentage = ((config.numImages / totalCombinations) * 100).toFixed(2);
-
-  console.log("\x1b[1m\x1b[36m+----------------------------------------------+");
-  console.log("|               \x1b[1m\x1b[33mCollection Details\x1b[36m             |");
-  console.log("+--------------------------+-------------------+");
-  console.log(`| \x1b[0m\x1b[32mCollection Name        \x1b[1m\x1b[36m| ${config.collectionName.padEnd(20)}\x1b[1m\x1b[36m|`);
-  console.log(`| \x1b[0m\x1b[32mCollection Size        \x1b[1m\x1b[36m| ${config.numImages.toString().padEnd(20)}\x1b[1m\x1b[36m|`);
-  console.log(`| \x1b[0m\x1b[32mStarting Index         \x1b[1m\x1b[36m| ${config.startAt.toString().padEnd(20)}\x1b[1m\x1b[36m|`);
-  console.log(`| \x1b[0m\x1b[32mOutput Folder          \x1b[1m\x1b[36m| ${config.outputFolder.padEnd(20)}\x1b[1m\x1b[36m|`);
-  console.log(`| \x1b[0m\x1b[32mNumber of Layers       \x1b[1m\x1b[36m| ${config.layersNumber.toString().padEnd(20)}\x1b[1m\x1b[36m|`);
-  console.log(`| \x1b[0m\x1b[32mImage Size             \x1b[1m\x1b[36m| ${config.imageWidth.toString().padEnd(2)} x ${config.imageHeight.toString().padEnd(10)} px \x1b[1m\x1b[36m|`);
-  console.log("+--------------------------+-------------------+");
-  console.log(`| \x1b[0m\x1b[32mTraits Folders         \x1b[0m\x1b[32m| ${"Folder Files".padEnd(20)}\x1b[1m\x1b[36m|`);
-  config.traitFolders.forEach((folder) => {
-    const traitPath = path.join(config.traitsFolder, folder);
-    const traitChoices = fs.readdirSync(traitPath);
-    console.log(`| \x1b[0m\x1b[35m- ${folder.padEnd(21)}\x1b[1m\x1b[36m| ${`${traitChoices.length} GIFs`.padEnd(20)}\x1b[1m\x1b[36m|`);
-  });
-  console.log("+--------------------------+-------------------+");
-  console.log(`| \x1b[0m\x1b[32mTotal Possible Comb.   \x1b[1m\x1b[36m|\x1b[0m ${totalCombinations.toString().padEnd(20)}\x1b[1m\x1b[36m|`);
-  console.log("+----------------------------------------------+\x1b[0m\n");
+  } catch (err) {
+      logError(`Failed to generate files: ${err.message}`);
+    }
 }
 
 
 
-// Returns a random trait from each fodler
-function randomChoice(array) {
-  return array[Math.floor(Math.random() * array.length)];
-}
 
 
-// Extracts frames from the gif
-async function extractFrames(gifPath) {
-  const { pages } = await sharp(gifPath).metadata();
-  const frameImages = [];
 
-  for (let i = 0; i < pages; i++) {
-    const frameBuffer = await sharp(gifPath, { page: i }).png().toBuffer();
-    const img = await loadImage(frameBuffer);
-    frameImages.push(img);
-  }
-
-  return frameImages;
-}
-
+//#########################################//
+//#                                       #//
+//#           Generate Image              #//
+//#                                       #//
+//#########################################//
 
 // Generates a single Image
-async function generateImage(i, config) {
+async function generateImage(i, config, storageChoice) {
   try {
     const traits = [];
     const canvases = [];
@@ -153,7 +134,7 @@ async function generateImage(i, config) {
     // Loop over all trait folders and choose a random trait for each
     for (const traitFolder of config.traitFolders) {
       const traitPath = path.join(config.traitsFolder, traitFolder);
-      const traitChoices = fs.readdirSync(traitPath);
+      const traitChoices = await readDir(traitPath);
       const chosenTrait = randomChoice(traitChoices);
       const chosenTraitPath = path.join(traitPath, chosenTrait);
 
@@ -204,8 +185,16 @@ async function generateImage(i, config) {
 }
 
 
+
+
+//#########################################//
+//#                                       #//
+//#             Generate Gif              #//
+//#                                       #//
+//#########################################//
+
 // Generates a single Gif
-async function generateGif(i, config) {
+async function generateGif(i, config, storageChoice) {
   try {
     const traits = [];
     const traitFrames = [];
@@ -213,7 +202,7 @@ async function generateGif(i, config) {
     // Loop over all trait folders and choose a random trait for each
     for (const traitFolder of config.traitFolders) {
       const traitPath = path.join(config.traitsFolder, traitFolder);
-      const traitChoices = fs.readdirSync(traitPath);
+      const traitChoices = await readDir(traitPath);
       const chosenTrait = randomChoice(traitChoices);
       const chosenTraitPath = path.join(traitPath, chosenTrait);
 
