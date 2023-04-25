@@ -5,7 +5,9 @@
 ## Overview
 NFTGEN is an open-source tool for generating unique NFT images or GIFs, complete with metadata. You can easily customize and configure NFTGEN to suit your needs and generate your own NFTs in just a few simple steps.
 
-https://user-images.githubusercontent.com/106103625/234364691-db103d8f-016f-4e6b-8bee-478fad5cd8d9.mp4
+
+https://user-images.githubusercontent.com/106103625/234408697-d7fbc1d1-fbf2-4dd7-9c9d-fa4384613886.mp4
+
 
 
 ## Installation
