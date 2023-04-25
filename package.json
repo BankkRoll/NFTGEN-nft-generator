@@ -1,14 +1,13 @@
 {
-    "name": "NFTGEN",
+    "name": "nftgen",
     "version": "4.2.0",
-    "description": "Generate gifs into nft gifs",
-    "main": "script.js",
+    "description": "Generate png, jpg, jpeg, gif , ect.. into NFTs",
+    "main": "generate.js",
     "scripts": {
         "start": "node generate.js",
         "collection-info": "node -e \"const config = require('./config.js'); const printCollectionInfo = require('./workers/collectionInfoPrinter.js'); printCollectionInfo(config);\"",
         "help": "node -e \"require('./workers/help.js')()\""
-      },
-      
+    },
     "dependencies": {
         "@thirdweb-dev/storage": "^1.1.2",
         "canvas": "^2.8.0",
