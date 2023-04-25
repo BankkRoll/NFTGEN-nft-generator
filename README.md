@@ -1,6 +1,9 @@
 # NFTGEN - NFT Image and GIF Generator
 
-![video](https://github.com/BankkRoll/NFTGEN-nft-gif-generator/blob/main/NFTGEN.mp4)
+
+
+https://user-images.githubusercontent.com/106103625/234364691-db103d8f-016f-4e6b-8bee-478fad5cd8d9.mp4
+
 
 ### Completely Free! Supports .GIF , .JPG, .PNG, .JPEG
 
