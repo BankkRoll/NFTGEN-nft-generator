@@ -36,6 +36,29 @@ https://user-images.githubusercontent.com/106103625/234364691-db103d8f-016f-4e6b
 5. Choose whether to upload the files to IPFS or keep them on your local machine. If you choose "Yes," the files will be uploaded to IPFS using [thirdweb Storage](https://portal.thirdweb.com/storage). If you choose "No," the files will remain local.
 6. Your NFTs have been generated and saved to the output folder you specified, and if you chose to upload them to IPFS, they are now available on the given URI.
 
+```
+┌────────────────────────────┐
+│ Usage: npm run <command>   │
+└────────────────────────────┘
+┌──────────────────────┬───────────────────────────────┐
+│ Command              │ Description                   │
+├──────────────────────┼───────────────────────────────┤
+│ start                │ Start the script              │
+│ collection-info      │ Print collection information  │
+│ help                 │ Prints this screen            │
+└──────────────────────┴───────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────────────────────────────┐
+│ Usage:                                                                                   │
+│ 1. Generate your NFTs by running the command "npm start" in your terminal.               │
+│ 2. Choose whether to generate GIFs or Images when prompted:                              │
+│    > GIFs                                                                                │
+│    > Images                                                                              │
+│ 3. This will generate the specified number of NFTs and save them to the output folder.   │
+│ 4. Choose whether to upload the files to IPFS or keep them on your files local:          │
+│    > Yes: Upload the files to IPFS using thirdweb Storage.                               │
+│    > No: Keep the files on your local machine.                                           │
+└──────────────────────────────────────────────────────────────────────────────────────────┘
+```
 ## Support
 If you encounter any issues while using NFTGEN, please feel free to submit an issue on the GitHub repository. We'll do our best to help you resolve the issue as quickly as possible.
 
