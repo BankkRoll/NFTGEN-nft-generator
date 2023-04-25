@@ -46,4 +46,4 @@ We welcome contributions to the NFTGEN project! If you'd like to contribute, ple
 NFTGEN is licensed under the Apache License, Version 2.0. See [LICENSE]([https://github.com/apache/.github/blob/main/LICENSE](https://github.com/BankkRoll/NFTGEN-nft-gif-generator/blob/main/LICENSE)) for the full text.
 
 ## Tip Jar
-If you found NFTGEN useful, consider buying me a Red Bull to fuel future development at the following Ethereum wallet address: `0x52b626802B3fc229badd50EA0d7e05278421C16f`
+If you found NFTGEN useful, consider buying me a Red Bull to fuel future development at the following Ethereum wallet address: `0xB26b2f9786090A9f647a90979b48C4Be564D7ff9`
