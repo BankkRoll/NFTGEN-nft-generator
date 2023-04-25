@@ -1,14 +1,12 @@
 # NFTGEN - NFT Image and GIF Generator
 
-
-
-https://user-images.githubusercontent.com/106103625/234364691-db103d8f-016f-4e6b-8bee-478fad5cd8d9.mp4
-
-
 ### Completely Free! Supports .GIF , .JPG, .PNG, .JPEG
 
 ## Overview
 NFTGEN is an open-source tool for generating unique NFT images or GIFs, complete with metadata. You can easily customize and configure NFTGEN to suit your needs and generate your own NFTs in just a few simple steps.
+
+https://user-images.githubusercontent.com/106103625/234364691-db103d8f-016f-4e6b-8bee-478fad5cd8d9.mp4
+
 
 ## Installation
 1. Star the project so i know to keep making things others find useful.
