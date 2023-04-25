@@ -4,8 +4,11 @@
     "description": "Generate gifs into nft gifs",
     "main": "script.js",
     "scripts": {
-        "start": "node generate.js"
-    },
+        "start": "node generate.js",
+        "collection-info": "node -e \"const config = require('./config.js'); const printCollectionInfo = require('./workers/collectionInfoPrinter.js'); printCollectionInfo(config);\"",
+        "help": "node -e \"require('./workers/help.js')()\""
+      },
+      
     "dependencies": {
         "@thirdweb-dev/storage": "^1.1.2",
         "canvas": "^2.8.0",
@@ -14,5 +17,5 @@
         "sharp": "^0.29.2"
     },
     "author": "Bankkroll.eth",
-    "license": "MIT"
+    "license": "APACHE"
 }
