@@ -9,6 +9,7 @@
     "dependencies": {
         "@thirdweb-dev/storage": "^1.1.2",
         "canvas": "^2.8.0",
+        "cli-spinners": "^2.8.0",
         "gifencoder": "^2.0.0",
         "sharp": "^0.29.2"
     },

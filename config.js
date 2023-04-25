@@ -1,19 +1,19 @@
 module.exports = {
 
-  traitsFolder: "traits", // folder name containing all your folders of traits
-  traitFolders: ["Head", "Eyes", "Mouth"], // each of your traits folder names inside the `traitsFolder`
+  traitsFolder: "traits", // folder name containing the image assets
+  traitFolders: ["Head", "Eyes", "Mouth"], // an array of subfolder names
   outputFolder: "output", // folder name for saving generated NFTs
 
-  layersNumber: 3, // number of image layers to combine ( amount of traits you have, total amount of `traitFolders` )
-  numImages: 10000, // total number of NFTs to generate
+  layersNumber: 3, // number of image layers to combine
+  numImages: 8, // total number of NFTs to generate
   startAt: 0, // index number to start generating NFTs at ( 0 or 1 )
 
   imageWidth: 600, // width of generated image
   imageHeight: 600, // height of generated image
 
   // NFT Metadata for each NFT
-  collectionName: "Cool NFT", // name of NFT collection DONT ADD NUMBER HERE THAT WILL BE DONE IN OUR SCRIPT!
-  collectionDescription: "I just generated my NFT GIFs using the NFTGEN by bankkroll found on github opensource!", // description of NFT collection. Markdown is supported
+  collectionName: "Cool NFT", // name of NFT collection
+  collectionDescription: "I just generated my NFT GIFs using the NFTGEN by bankkroll found on github opensource!", // description of NFT collection
   collectionExternal_url: "https://github.com/BankkRoll/NFTGEN-nft-gif-generator", // external URL for NFT collection
 };
 
