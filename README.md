@@ -26,8 +26,12 @@ NFTGEN is an open-source tool for generating unique NFT images or GIFs, complete
    * `collectionExternal_url`: The external URL for your NFT collection.
 
 ## Usage
-1. Generate your NFTs by running the command `npm start` in your terminal or command prompt.
-2. This will generate the specified number of NFTs and save them to the output folder you specified in the configuration settings.
+1. Please complete the [Configuration](https://github.com/BankkRoll/NFTGEN-nft-gif-generator/edit/main/README.md#configuration)
+2. Generate your NFTs by running the command `npm start` in your terminal or command prompt.
+3. Choose whether to generate GIFs or Images when prompted.
+4. This will generate the specified number of NFTs and save them to the output folder you specified in the configuration settings.
+5. Choose whether to upload the files to IPFS or keep them on your local machine. If you choose "Yes," the files will be uploaded to IPFS using [thirdweb Storage](https://portal.thirdweb.com/storage). If you choose "No," the files will remain local.
+6. Your NFTs have been generated and saved to the output folder you specified, and if you chose to upload them to IPFS, they are now available on the given URI.
 
 ## Support
 If you encounter any issues while using NFTGEN, please feel free to submit an issue on the GitHub repository. We'll do our best to help you resolve the issue as quickly as possible.
