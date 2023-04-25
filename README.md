@@ -29,7 +29,7 @@ https://user-images.githubusercontent.com/106103625/234364691-db103d8f-016f-4e6b
    * `collectionExternal_url`: The external URL for your NFT collection.
 
 ## Usage
-1. Please complete the [Configuration](https://github.com/BankkRoll/NFTGEN-nft-gif-generator/edit/main/README.md#configuration)
+1. Please complete the [Configuration](https://github.com/BankkRoll/NFTGEN-nft-gif-generator#configuration)
 2. Generate your NFTs by running the command `npm start` in your terminal or command prompt.
 3. Choose whether to generate GIFs or Images when prompted.
 4. This will generate the specified number of NFTs and save them to the output folder you specified in the configuration settings.
