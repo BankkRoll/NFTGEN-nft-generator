@@ -1,8 +1,8 @@
-# NFTGEN - NFT Image and GIF Generator
+# 🎨 NFTGEN - NFT Image and GIF Generator
 
 ### Completely Free! Supports .GIF , .JPG, .PNG, .JPEG
 
-## Overview
+## 📝 Overview
 NFTGEN is an open-source tool for generating unique NFT images or GIFs, complete with metadata. You can easily customize and configure NFTGEN to suit your needs and generate your own NFTs in just a few simple steps.
 
 
@@ -10,14 +10,14 @@ https://user-images.githubusercontent.com/106103625/234408697-d7fbc1d1-fbf2-4dd7
 
 
 
-## Installation
+## ⚙️ Installation
 1. Star the project so i know to keep making things others find useful.
 2. Download [Node.js](https://nodejs.org)
 3. Clone the NFTGEN repository from GitHub: `git clone https://github.com/BankkRoll/NFTGEN-nft-generator.git`
 4. Or download here -> https://github.com/BankkRoll/NFTGEN-nft-generator/archive/refs/heads/main.zip
 5. Install the project dependencies: `npm install`
 
-## Configuration
+## 🔧 Configuration
 1. Update the configuration settings in the `config.js` file to customize the output of your NFTs.
 2. Here's a brief overview of the configuration settings:
    * `traitsFolder`: The name of the folder containing the image assets.
@@ -30,7 +30,7 @@ https://user-images.githubusercontent.com/106103625/234408697-d7fbc1d1-fbf2-4dd7
    * `collectionDescription`: The description for your NFT collection.
    * `collectionExternal_url`: The external URL for your NFT collection.
 
-## Usage
+## 🚀 Usage
 1. Please complete the [Configuration](https://github.com/BankkRoll/NFTGEN-nft-generator#configuration)
 2. Generate your NFTs by running the command `npm start` in your terminal or command prompt.
 3. Choose whether to generate GIFs or Images when prompted.
@@ -61,14 +61,14 @@ https://user-images.githubusercontent.com/106103625/234408697-d7fbc1d1-fbf2-4dd7
 │    > No: Keep the files on your local machine.                                           │
 └──────────────────────────────────────────────────────────────────────────────────────────┘
 ```
-## Support
+## 🙋 Support
 If you encounter any issues while using NFTGEN, please feel free to submit an issue on the GitHub repository. We'll do our best to help you resolve the issue as quickly as possible.
 
-## Contributing
+## 🤝 Contributing
 We welcome contributions to the NFTGEN project! If you'd like to contribute, please fork the repository and submit a pull request with your changes. We'll review your changes and merge them if they meet our project standards.
 
-## License
+## 📜 License
 NFTGEN is licensed under the Apache License, Version 2.0. See [LICENSE](https://github.com/BankkRoll/NFTGEN-nft-generator/blob/main/LICENSE) for the full text.
 
-## Tip Jar
+## 💰 Tip Jar
 If you found NFTGEN useful, consider buying me a Red Bull to fuel future development at the following Ethereum wallet address: `0xB26b2f9786090A9f647a90979b48C4Be564D7ff9`
