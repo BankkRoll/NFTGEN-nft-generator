@@ -2,7 +2,6 @@ const fs = require("fs");
 const path = require("path");
 const { loadImage, createCanvas } = require("canvas");
 const GIFEncoder = require("gifencoder");
-const inquirer = require('inquirer');
 const config = require("./config.js");
 const { execSync } = require('child_process');
 
@@ -283,4 +282,9 @@ async function generateGif(i, config) {
 }
 
 
-main();
+// Dynamic import of the 'inquirer' module
+let inquirer;
+import('inquirer').then(module => {
+  inquirer = module;
+  main();
+});
