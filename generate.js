@@ -2,20 +2,37 @@ const fs = require("fs");
 const path = require("path");
 const { loadImage, createCanvas } = require("canvas");
 const GIFEncoder = require("gifencoder");
+const inquirer = require('inquirer');
 const config = require("./config.js");
+const { ThirdwebStorage } = require("@thirdweb-dev/storage");
 const { execSync } = require('child_process');
 
 const printHeader = require('./workers/bankkroll');
 const printCollectionInfo = require("./workers/collectionInfoPrinter");
-const { logSuccess, logError, logRegular } = require("./workers/consoleLogger");
+const { logSuccess, logError } = require("./workers/consoleLogger");
+const { readDir } = require("./workers/utils");
+const animateConsoleLog = require('./workers/animateLogs');
 const extractFrames = require('./workers/extractFrames');
-const { generateUniqueTraits, calculateTotalCombinations } = require('./workers/combinations');
-const ora = require('ora');
+
 
 
 // Create a delay
 function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// Returns a random trait from each fodler
+function randomChoice(array) {
+  return array[Math.floor(Math.random() * array.length)];
+}
+
+// Calculate the total combinations possible
+function calculateTotalCombinations(config) {
+  return config.traitFolders.reduce((acc, folder) => {
+    const traitPath = path.join(config.traitsFolder, folder);
+    const traitChoices = fs.readdirSync(traitPath);
+    return acc * traitChoices.length;
+  }, 1);
 }
 
 
@@ -48,30 +65,14 @@ async function main() {
     // Calculate the total number of possible combinations of traits
     const totalCombinations = calculateTotalCombinations(config);
 
+    // Check that the requested number of files does not exceed the total possible combinations
     if (config.numImages > totalCombinations) {
       logError(`Requested number of files (${config.numImages}) exceeds the total possible combinations (${totalCombinations}). Please lower the number of files to generate.`);
       return;
     }
-
-
-    const loadingSpinner = ora({
-      text: `Reading ${fileType}.`,
-      color: 'cyan',
-      spinner: 'dots6'
-    }).start();
-    await delay(2000);
-    loadingSpinner.succeed(`Verified ${fileType}.`);
-    
-    const loadingSpinner1 = ora({
-      text: `Confirming Details.`,
-      color: 'cyan',
-      spinner: 'dots6'
-    }).start();
-    await delay(2000);
-    loadingSpinner1.succeed(`Confimred config.js`);
-
-    await delay(1000);
     printCollectionInfo(config);
+    animateConsoleLog(`\n\x1b[1m\x1b[36m Generating ${fileType}.......\x1b[0m\n`, 50);
+    await delay(2500);
 
     for (let i = 0; i < config.numImages; i++) {
       if (choice.toUpperCase() === 'G') {
@@ -82,8 +83,8 @@ async function main() {
       logSuccess(`Generated ${fileType} #${i + config.startAt}`);
     }
 
-    logSuccess(`All ${fileType} generated successfully! Details below.`);
-
+    animateConsoleLog(`\n\x1b[1m\x1b[32m All ${fileType} generated successfully! Details below.... \x1b[0m\n`, 40);
+    await delay(5000);
 
     printCollectionInfo(config);
     await delay(2000);
@@ -101,16 +102,11 @@ async function main() {
       const cmd = `npx thirdweb@latest upload ${folderPath}`;
       execSync(cmd, { stdio: 'inherit' });
     } else {
-      const loadingSpinner = ora({
-        text: `Skipping IPFS upload.`,
-        color: 'cyan',
-        spinner: 'dots6'
-      }).start();
-      await delay(1000);
-      loadingSpinner.succeed(`IPFS upload skipped.`);
+      console.log('Skipping IPFS upload.');
     }
 
 
+    await delay(2000);
     printHeader();
 
   } catch (err) {
@@ -129,19 +125,17 @@ async function main() {
 //#                                       #//
 //#########################################//
 
-async function generateImage(i, config) {
+// Generates a single Image
+async function generateImage(i, config, storageChoice) {
   try {
-    // Generate unique traits
-    const chosenTraits = await generateUniqueTraits(config.traitFolders, config);
-
     const traits = [];
     const canvases = [];
 
-    // Loop over all trait folders and use the chosen unique traits
-    for (let j = 0; j < config.traitFolders.length; j++) {
-      const traitFolder = config.traitFolders[j];
+    // Loop over all trait folders and choose a random trait for each
+    for (const traitFolder of config.traitFolders) {
       const traitPath = path.join(config.traitsFolder, traitFolder);
-      const chosenTrait = chosenTraits[j];
+      const traitChoices = await readDir(traitPath);
+      const chosenTrait = randomChoice(traitChoices);
       const chosenTraitPath = path.join(traitPath, chosenTrait);
 
       // Load the image
@@ -183,13 +177,12 @@ async function generateImage(i, config) {
     const outputJsonPath = path.join(config.outputFolder, `${i + config.startAt}.json`);
     fs.writeFileSync(outputJsonPath, JSON.stringify(metadata, null, 2));
 
-    logRegular(`JSON metadata: ${outputJsonPath}`);
-    logRegular(`Image file: ${outputPath}`);
+    console.log(`- JSON metadata: \x1b[2m${outputJsonPath}\x1b[0m`);
+    console.log(`- Image file: \x1b[2m${outputPath}\x1b[0m`);
   } catch (err) {
-    logError(`Failed to generate image ${i + config.startAt}: ${err.message}`);
+    console.error(`\x1b[31m❌ Failed to generate image ${i + config.startAt}: \x1b[0m${err.message}`);
   }
 }
-
 
 
 
@@ -200,19 +193,17 @@ async function generateImage(i, config) {
 //#                                       #//
 //#########################################//
 
-async function generateGif(i, config) {
+// Generates a single Gif
+async function generateGif(i, config, storageChoice) {
   try {
-    // Generate unique traits
-    const chosenTraits = await generateUniqueTraits(config.traitFolders, config);
-
     const traits = [];
     const traitFrames = [];
 
-    // Loop over all trait folders and use the chosen unique traits
-    for (let j = 0; j < config.traitFolders.length; j++) {
-      const traitFolder = config.traitFolders[j];
+    // Loop over all trait folders and choose a random trait for each
+    for (const traitFolder of config.traitFolders) {
       const traitPath = path.join(config.traitsFolder, traitFolder);
-      const chosenTrait = chosenTraits[j];
+      const traitChoices = await readDir(traitPath);
+      const chosenTrait = randomChoice(traitChoices);
       const chosenTraitPath = path.join(traitPath, chosenTrait);
 
       // Extract frames from the chosen trait
@@ -274,17 +265,11 @@ async function generateGif(i, config) {
     const outputJsonPath = path.join(config.outputFolder, `${i + config.startAt}.json`);
     fs.writeFileSync(outputJsonPath, JSON.stringify(metadata, null, 2));
 
-    logRegular(`JSON metadata: ${outputJsonPath}`);
-    logRegular(`GIF file: ${outputPath}`);
+    console.log(`- JSON metadata: \x1b[2m${outputJsonPath}\x1b[0m`);
+    console.log(`- GIF file: \x1b[2m${outputGifPath}\x1b[0m`);
   } catch (err) {
-    logError(`Failed to generate GIF ${i + config.startAt}: ${err.message}`);
+    console.error(`\x1b[31m❌ Failed to generate GIF ${i + config.startAt}: \x1b[0m${err.message}`);
   }
 }
 
-
-// Dynamic import of the 'inquirer' module
-let inquirer;
-import('inquirer').then(module => {
-  inquirer = module;
-  main();
-});
+main();
