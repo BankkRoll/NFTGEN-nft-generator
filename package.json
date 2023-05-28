@@ -1,20 +1,21 @@
 {
     "name": "nftgen",
-    "version": "4.2.0",
+    "version": "4.2.1",
     "description": "Generate png, jpg, jpeg, gif , ect.. into NFTs",
-    "main": "generate.js",
+    "main": "generate.mjs",
+    "type": "module",
     "scripts": {
-        "start": "node generate.js",
-        "collection-info": "node -e \"const config = require('./config.js'); const printCollectionInfo = require('./workers/collectionInfoPrinter.js'); printCollectionInfo(config);\"",
-        "help": "node -e \"require('./workers/help.js')()\""
+        "start": "node --experimental-modules generate.mjs",
+        "collection-info": "node -e \"import config from './config.mjs'; import printCollectionInfo from './workers/collectionInfoPrinter.mjs'; printCollectionInfo(config);\"",
+        "help": "node -e \"import help from './workers/help.mjs'; help();\""
     },
     "dependencies": {
         "@thirdweb-dev/storage": "^1.1.2",
         "canvas": "^2.8.0",
         "cli-spinners": "^2.8.0",
         "gifencoder": "^2.0.0",
-        "sharp": "^0.29.2",
-        "inquirer": "^7.3.0"
+        "inquirer": "^7.3.3",
+        "sharp": "^0.29.2"
     },
     "author": "Bankkroll.eth",
     "license": "APACHE"
