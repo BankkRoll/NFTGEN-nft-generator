@@ -7,7 +7,7 @@
     "scripts": {
         "start": "node --experimental-modules generate.mjs",
         "collection-info": "node -e \"import config from './config.mjs'; import printCollectionInfo from './workers/collectionInfoPrinter.mjs'; printCollectionInfo(config);\"",
-        "help": "node -e \"import help from './workers/help.mjs'; help();\""
+        "help": "node --experimental-modules ./run-help.mjs"
     },
     "dependencies": {
         "@thirdweb-dev/storage": "^1.1.2",
