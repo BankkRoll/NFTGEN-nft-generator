@@ -4,9 +4,9 @@ import { join } from 'path';
 // Calculate the total combinations possible
 function calculateTotalCombinations(config) {
     return config.traitFolders.reduce((acc, folder) => {
-      const traitPath = join(config.traitsFolder, folder);
-      const traitChoices = readdirSync(traitPath);
-      return acc * traitChoices.length;
+        const traitPath = join(config.traitsFolder, folder); // Use path.join() instead of join()
+        const traitChoices = readdirSync(traitPath);
+        return acc * traitChoices.length;
     }, 1);
 }
 
@@ -25,14 +25,15 @@ function printCollectionInfo(config) {
     console.log(`| \x1b[0m\x1b[32mImage Size             \x1b[1m\x1b[36m| ${config.imageWidth.toString().padEnd(2)} x ${config.imageHeight.toString().padEnd(10)} px \x1b[1m\x1b[36m|`);
     console.log("+--------------------------+-------------------+");
     console.log(`| \x1b[0m\x1b[32mTraits Folders         \x1b[0m\x1b[32m| ${"Folder Files".padEnd(20)}\x1b[1m\x1b[36m|`);
+    
     config.traitFolders.forEach((folder) => {
-      const traitPath = path.join(config.traitsFolder, folder);
-      const traitChoices = fs.readdirSync(traitPath);
+        const traitPath = join(config.traitsFolder, folder); // Use path.join() instead of join()
+        const traitChoices = readdirSync(traitPath);
       console.log(`| \x1b[0m\x1b[35m- ${folder.padEnd(21)}\x1b[1m\x1b[36m| x ${`${traitChoices.length}`.padEnd(18)}\x1b[1m\x1b[36m|`);
     });
     console.log("+--------------------------+-------------------+");
     console.log(`| \x1b[0m\x1b[32mTotal Possible Comb.   \x1b[1m\x1b[36m| ${totalCombinations.toString().padEnd(20)}\x1b[1m\x1b[36m|`);
     console.log("+----------------------------------------------+\x1b[0m\n");
-  }
+}
 
 export default printCollectionInfo;
