@@ -5,6 +5,7 @@ import GIFEncoder from 'gifencoder';
 import inquirer from 'inquirer';
 import config from './config.mjs';
 import { execSync } from 'child_process';
+import pLimit from 'p-limit';
 
 import printHeader from './workers/bankkroll.mjs';
 import printCollectionInfo from "./workers/collectionInfoPrinter.mjs";
@@ -12,6 +13,7 @@ import { logSuccess, logError, logRegular } from "./workers/consoleLogger.mjs";
 import { extractFrames } from './workers/extractFrames.mjs';
 import { generateUniqueTraits, calculateTotalCombinations } from './workers/combinations.mjs';
 import ora from 'ora';
+import chalk from 'chalk';
 
 
 // Create a delay
@@ -36,11 +38,28 @@ async function main() {
     printHeader();
     await delay(1500);
 
+    // Prompt the user to enter the desired processing intensity
+    const { machineStrength } = await inquirer.prompt({
+      type: 'list',
+      name: 'machineStrength',
+      message: chalk.cyan('What level of processing intensity do you want to run this task with? (Choose a lower level for weaker machines)'),
+      choices: [
+        { name: 'Low (2 - Suitable for low-end machines)', value: 2 },
+        { name: 'Medium (4 - Suitable for average hardware)', value: 4 },
+        { name: 'High (6 - Suitable for high-end machines)', value: 6 },
+        { name: 'Very High (8 - Suitable for very high-end machines)', value: 8 },
+        { name: 'Ultra (10 - Suitable for top-tier hardware specs)', value: 10 },
+        { name: 'Insane (12 - Only for the most powerful machines)', value: 12 }
+      ]
+    });
+
+    const limit = pLimit(machineStrength);
+
     // Prompt the user to choose between generating GIFs or images
     const answer = await inquirer.prompt({
       type: 'list',
       name: 'choice',
-      message: 'Do you want to generate GIFs or Images?',
+      message: chalk.cyan('Do you want to generate GIFs or Images?'),
       choices: ['GIFs', 'Images']
     });
     const choice = answer.choice.charAt(0);
@@ -54,46 +73,48 @@ async function main() {
       return;
     }
 
-
     const loadingSpinner = ora({
       text: `Reading ${fileType}.`,
       color: 'cyan',
       spinner: 'dots6'
     }).start();
     await delay(2000);
-    loadingSpinner.succeed(`Verified ${fileType}.`);
-    
+    loadingSpinner.succeed(chalk.green(`Verified ${fileType}.`));
+
+    await delay(1000);
+    printCollectionInfo(config);
+
     const loadingSpinner1 = ora({
       text: `Confirming Details.`,
       color: 'cyan',
       spinner: 'dots6'
     }).start();
     await delay(2000);
-    loadingSpinner1.succeed(`Confimred config.js`);
+    loadingSpinner1.succeed(chalk.green(`Confimred config.js`));
 
-    await delay(1000);
-    printCollectionInfo(config);
 
-    for (let i = 0; i < config.numImages; i++) {
-      if (choice.toUpperCase() === 'G') {
-        await generateGif(i, config);
-      } else {
-        await generateImage(i, config);
-      }
-      logSuccess(`Generated ${fileType} #${i + config.startAt}`);
-    }
+    const tasks = Array.from({ length: config.numImages }, (_, i) =>
+      limit(async () => {
+        if (choice.toUpperCase() === 'G') {
+          await generateGif(i, config);
+        } else {
+          await generateImage(i, config);
+        }
+        logSuccess(`Generated ${fileType} #${i + config.startAt}`);
+      })
+    );
+
+    await Promise.all(tasks);
 
     logSuccess(`All ${fileType} generated successfully! Details below.`);
 
-
-    printCollectionInfo(config);
     await delay(2000);
 
     // Prompt the user to choose whether to upload to IPFS or not
     const ipfsAnswer = await inquirer.prompt({
       type: 'list',
       name: 'choice',
-      message: 'Do you want to upload the generated files to IPFS?',
+      message: chalk.cyan('Do you want to upload the generated files to IPFS?'),
       choices: ['Yes', 'No'],
     });
 
@@ -111,14 +132,12 @@ async function main() {
       loadingSpinner.succeed(`IPFS upload skipped.`);
     }
 
-
     printHeader();
 
   } catch (err) {
       logError(`Failed to generate files: ${err.message}`);
-    }
+  }
 }
-
 
 
 
@@ -218,6 +237,10 @@ async function generateGif(i, config) {
 
       // Extract frames from the chosen trait
       const frames = await extractFrames(chosenTraitPath);
+      if (!frames) {
+          console.error(`Failed to extract frames from file at path: ${chosenTraitPath}`);
+          return;
+      }
 
       // Add the trait to the traits array
       traits.push({
@@ -229,14 +252,17 @@ async function generateGif(i, config) {
       traitFrames.push(frames);
     }
 
+    // Calculate max frames for looping
+    const maxFrames = Math.max(...traitFrames.map(x => x.length));
+
     // Combine frames from each trait into a single image
     const frames = [];
-    for (let frameIndex = 0; frameIndex < 4; frameIndex++) {
+    for (let frameIndex = 0; frameIndex < maxFrames; frameIndex++) {
       const canvas = createCanvas(config.imageWidth, config.imageHeight, 'sRGB');
       const ctx = canvas.getContext("2d");
 
       for (let j = 0; j < config.layersNumber; j++) {
-        const frame = traitFrames[j][frameIndex];
+        const frame = traitFrames[j][frameIndex % traitFrames[j].length];
         ctx.drawImage(frame, 0, 0, config.imageWidth, config.imageHeight);
       }
 
@@ -276,11 +302,12 @@ async function generateGif(i, config) {
     fs.writeFileSync(outputJsonPath, JSON.stringify(metadata, null, 2));
 
     logRegular(`JSON metadata: ${outputJsonPath}`);
-    logRegular(`GIF file: ${outputPath}`);
+    logRegular(`GIF file: ${outputGifPath}`);
   } catch (err) {
     logError(`Failed to generate GIF ${i + config.startAt}: ${err.message}`);
   }
 }
+
 
 
 main();

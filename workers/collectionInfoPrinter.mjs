@@ -33,7 +33,7 @@ function printCollectionInfo(config) {
     });
     console.log("+--------------------------+-------------------+");
     console.log(`| \x1b[0m\x1b[32mTotal Possible Comb.   \x1b[1m\x1b[36m| ${totalCombinations.toString().padEnd(20)}\x1b[1m\x1b[36m|`);
-    console.log("+----------------------------------------------+\x1b[0m\n");
+    console.log("+----------------------------------------------+\x1b[0m");
 }
 
 export default printCollectionInfo;
