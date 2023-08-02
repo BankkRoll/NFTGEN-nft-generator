@@ -81,7 +81,7 @@ async function main() {
     await delay(2000);
     loadingSpinner.succeed(chalk.green(`Verified ${fileType}.`));
 
-    await delay(1000);
+    await delay(500);
     printCollectionInfo(config);
 
     const loadingSpinner1 = ora({
@@ -90,7 +90,15 @@ async function main() {
       spinner: 'dots6'
     }).start();
     await delay(2000);
-    loadingSpinner1.succeed(chalk.green(`Confimred config.js`));
+    loadingSpinner1.succeed(chalk.green(`Confimred config.js.`));
+
+    const loadingSpinner2 = ora({
+      text: `Thinking please wait....`,
+      color: 'cyan',
+      spinner: 'dots6'
+    }).start();
+    await delay(2000);
+    loadingSpinner2.succeed(chalk.green(`Loading traits....`));
 
 
     const tasks = Array.from({ length: config.numImages }, (_, i) =>
@@ -106,9 +114,9 @@ async function main() {
 
     await Promise.all(tasks);
 
-    logSuccess(`All ${fileType} generated successfully! Details below.`);
+    logSuccess(`All ${fileType} generated successfully!`);
 
-    await delay(2000);
+    await delay(1000);
 
     // Prompt the user to choose whether to upload to IPFS or not
     const ipfsAnswer = await inquirer.prompt({
